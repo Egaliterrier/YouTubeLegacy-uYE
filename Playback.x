@@ -21,7 +21,7 @@ static GPBExtensionDescriptor *getCoWatchEndpointWrapperCommandDescriptor() {
     Class coWatchCommandClass = %c(YTICoWatchWatchEndpointWrapperCommand);
     if ([coWatchCommandClass respondsToSelector:@selector(coWatchWatchEndpointWrapperCommand)])
         return [coWatchCommandClass coWatchWatchEndpointWrapperCommand];
-    return [coWatchCommandClass descriptor];
+    return nil; // Don't return descriptor - it's the wrong type
 }
 
 static YTICommand *legacyGetWatchEndpoint(YTICommand *command) {
@@ -31,7 +31,7 @@ static YTICommand *legacyGetWatchEndpoint(YTICommand *command) {
 
 static YTICommand *getWatchEndpoint(YTICommand *command) {
     GPBExtensionDescriptor *coWatchCommand = getCoWatchEndpointWrapperCommandDescriptor();
-    if ([command hasExtension:coWatchCommand])
+    if (coWatchCommand && [command hasExtension:coWatchCommand])
         return [(YTICoWatchWatchEndpointWrapperCommand *)[command getExtension:coWatchCommand] watchEndpoint];
     return legacyGetWatchEndpoint(command);
 }
